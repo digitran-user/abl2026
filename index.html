@@ -20,7 +20,7 @@
     <!-- ===== NAV ===== -->
     <nav class="navbar" id="navbar">
         <div class="nav-brand">
-            <div class="nav-logo"><img src="D:\PlayerAuction\images\abllogo.png" /></div>
+            <div class="nav-logo"><img src="/images/abllogo.png" /></div>
             <span class="nav-title">ABL 2026</span>
         </div>
         <div class="nav-tabs">
@@ -163,7 +163,8 @@
                 </div>
                 <div class="preview-actions">
                     <button class="btn-danger" onclick="clearData()">🗑️ Clear</button>
-                    <button class="btn-primary" onclick="importData()">✅ Import Players</button>
+                    <button class="btn-primary" id="btn-import" onclick="importData()">💾 Import &amp; Save to
+                        DB</button>
                 </div>
             </div>
         </div>
@@ -212,7 +213,7 @@
                 <div class="bid-input-wrap">
                     <span class="bid-currency">₹</span>
                     <input type="number" class="bid-input" id="bid-input" placeholder="Enter bid amount" />
-                    <span class="bid-unit">Lakhs</span>
+                    <span class="bid-unit">Rs</span>
                 </div>
                 <div class="bid-quick-btns" id="bid-quick-btns"></div>
                 <div class="auction-actions">
