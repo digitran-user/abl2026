@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 // ── MongoDB connection ────────────────────────────
 // Change MONGO_URI to your connection string if needed.
 // Default: local MongoDB on the same machine.
+
 const MONGO_URI = 'mongodb+srv://Vercel-Admin-atlas-apricot-flame:tMsG26HFUAtZjHhX@atlas-apricot-flame.iwvhbys.mongodb.net/playerDetails?retryWrites=true&w=majority';
 
 mongoose.connect(MONGO_URI)
