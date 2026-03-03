@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ABL 2026</title>
+    <meta name="description" content="Assetz Badminton League 2026" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <!-- SheetJS for Excel reading -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- ===== NAV ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-brand">
+            <div class="nav-logo"><img src="D:\PlayerAuction\images\abllogo.png" /></div>
+            <span class="nav-title">ABL 2026</span>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" id="tab-upload" onclick="switchTab('upload')">Upload Players</button>
+            <button class="nav-tab" id="tab-auction" onclick="switchTab('auction')">Live Auction</button>
+        </div>
+        <div class="nav-right">
+            <span class="nav-badge" id="player-count-badge">0 Players</span>
+        </div>
+    </nav>
+
+    <!-- ===== DASHBOARD TAB ===== -->
+    <section class="tab-section active" id="section-dashboard">
+
+        <!-- Hero Stats -->
+        <div class="stats-bar">
+            <div class="stat-card" id="stat-total">
+                <div class="stat-icon">👤</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="stat-total-val">0</div>
+                    <div class="stat-label">Total Players</div>
+                </div>
+            </div>
+            <div class="stat-card" id="stat-available">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="stat-avail-val">0</div>
+                    <div class="stat-label">Available</div>
+                </div>
+            </div>
+            <div class="stat-card" id="stat-sold">
+                <div class="stat-icon">🏷️</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="stat-sold-val">0</div>
+                    <div class="stat-label">Sold</div>
+                </div>
+            </div>
+            <div class="stat-card" id="stat-budget">
+                <div class="stat-icon">💰</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="stat-budget-val">₹0</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="search-input"
+                    placeholder="Search shuttlers by name, category" oninput="filterPlayers()" />
+            </div>
+            <div class="filter-chips" id="filter-chips">
+                <button class="chip active" onclick="setGenderFilter('All', this)">All</button>
+                <button class="chip chip-men" onclick="setGenderFilter('Men', this)">👨 Men</button>
+                <button class="chip chip-women" onclick="setGenderFilter('Womens', this)">👩 Women</button>
+                <button class="chip chip-kids" onclick="setGenderFilter('Kids', this)">🧒 Kids</button>
+            </div>
+            <div class="sort-wrap">
+                <select class="sort-select" id="skill-filter" onchange="filterPlayers()">
+                    <option value="all">🎯 All Levels</option>
+                    <option value="advanced">⭐ Advanced</option>
+                    <option value="intermediate">🔵 Intermediate</option>
+                    <option value="beginner">🟢 Beginner</option>
+                    <option value="sold_price">💰 Sold Price</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Player Grid -->
+        <div class="player-grid" id="player-grid">
+            <div class="empty-state" id="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>No Players Loaded</h3>
+                <p>Upload an Excel file in the <strong>Upload Players</strong> tab to get started.</p>
+                <button class="btn-primary" onclick="switchTab('upload')">Upload Excel</button>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ===== UPLOAD TAB ===== -->
+    <section class="tab-section" id="section-upload">
+        <div class="upload-container">
+            <div class="upload-card">
+                <div class="upload-icon">📊</div>
+                <h2>Upload Player Data</h2>
+                <p class="upload-sub">Upload an Excel (.xlsx / .xls) or CSV file with player information</p>
+
+                <div class="drop-zone" id="drop-zone"
+                    ondragover="event.preventDefault(); this.classList.add('drag-over')"
+                    ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)">
+                    <div class="drop-icon">📂</div>
+                    <p class="drop-text">Drag & Drop your file here</p>
+                    <p class="drop-sub">or</p>
+                    <label class="btn-primary" for="file-input">Browse File</label>
+                    <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none"
+                        onchange="handleFileSelect(event)" />
+                </div>
+
+                <div class="format-hint">
+                    <h4>📌 Expected Excel Column Names</h4>
+                    <div class="columns-grid">
+                        <span class="col-tag" style="border-color:#6366f1;color:#818cf8">Name *</span>
+                        <span class="col-tag" style="border-color:#6366f1;color:#818cf8">Gender *</span>
+                        <span class="col-tag" style="border-color:#6366f1;color:#818cf8">Skill *</span>
+                        <span class="col-tag" style="border-color:#6366f1;color:#818cf8">Photo URL *</span>
+                        <span class="col-tag">Category</span>
+                        <span class="col-tag">Age</span>
+                        <span class="col-tag">Country</span>
+                        <span class="col-tag">Base Price</span>
+                        <span class="col-tag">Playing Hand</span>
+                        <span class="col-tag">Playing Experience</span>
+                        <span class="col-tag">Last Played</span>
+                        <span class="col-tag">Status</span>
+                    </div>
+                    <p style="font-size:.75rem;color:var(--text-muted);margin-top:.6rem">
+                        ⭐ Highlighted columns are key. Gender values: <strong>Men / Womens / Kids</strong> &nbsp;|&nbsp;
+                        Skill values: <strong>Advanced / Intermediate / Beginner</strong> &nbsp;|&nbsp;
+                        Photo URL: paste direct image link or Google Drive share link
+                    </p>
+                </div>
+
+                <div class="upload-actions">
+                    <button class="btn-secondary" onclick="loadSampleData()">🎯 Load Sample Data</button>
+                    <button class="btn-secondary" onclick="downloadTemplate()">⬇️ Download Template</button>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="preview-card" id="preview-card" style="display:none">
+                <div class="preview-header">
+                    <h3 id="preview-title">File Preview</h3>
+                    <span class="preview-count" id="preview-count"></span>
+                </div>
+                <div class="table-wrap">
+                    <table class="preview-table" id="preview-table"></table>
+                </div>
+                <div class="preview-actions">
+                    <button class="btn-danger" onclick="clearData()">🗑️ Clear</button>
+                    <button class="btn-primary" onclick="importData()">✅ Import Players</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== AUCTION TAB ===== -->
+    <section class="tab-section" id="section-auction">
+        <div class="auction-layout">
+
+            <!-- Current Player Spotlight -->
+            <div class="auction-spotlight" id="auction-spotlight">
+                <div class="spotlight-empty" id="spotlight-empty">
+                    <div class="spotlight-icon">�</div>
+                    <h3>No Active Auction</h3>
+                    <p>Select a shuttler from the queue to start bidding</p>
+                </div>
+                <div class="spotlight-player" id="spotlight-player" style="display:none">
+                    <div class="spotlight-img-wrap">
+                        <img id="sp-photo" src="" alt="Player" class="spotlight-img"
+                            onerror="this.src='https://ui-avatars.com/api/?name=Player&background=6366f1&color=fff&size=200'" />
+                        <div class="sp-status-ring"></div>
+                    </div>
+                    <div class="spotlight-info">
+                        <div class="sp-role-badge" id="sp-role">Singles</div>
+                        <h2 class="sp-name" id="sp-name">Player Name</h2>
+                        <div class="sp-meta">
+                            <span id="sp-country">🌍 Country</span>
+                            <span id="sp-age">🎂 Age: —</span>
+                        </div>
+                        <div class="sp-stats" id="sp-stats"></div>
+                        <div class="sp-price-section">
+                            <div class="sp-base">Base: <strong id="sp-base">₹0</strong></div>
+                            <div class="sp-current-bid">Current Bid: <strong class="bid-amount"
+                                    id="sp-current-bid">₹0</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bid Panel -->
+            <div class="bid-panel" id="bid-panel" style="display:none">
+                <h3 class="bid-panel-title">Place a Bid</h3>
+                <div class="team-selector" id="team-selector">
+                    <!-- Teams loaded dynamically -->
+                </div>
+                <div class="bid-input-wrap">
+                    <span class="bid-currency">₹</span>
+                    <input type="number" class="bid-input" id="bid-input" placeholder="Enter bid amount" />
+                    <span class="bid-unit">Lakhs</span>
+                </div>
+                <div class="bid-quick-btns" id="bid-quick-btns"></div>
+                <div class="auction-actions">
+                    <button class="btn-bid" id="btn-bid" onclick="placeBid()">🔨 Place Bid</button>
+                    <button class="btn-sold" id="btn-sold" onclick="markSold()">✅ Sold!</button>
+                    <button class="btn-unsold" id="btn-unsold" onclick="markUnsold()">❌ Unsold</button>
+                </div>
+                <div class="bid-history" id="bid-history"></div>
+            </div>
+
+            <!-- Player Queue -->
+            <div class="auction-queue">
+                <h3 class="queue-title">Player Queue</h3>
+                <div class="queue-list" id="queue-list">
+                    <p class="queue-empty">No players available. Import data first.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== PLAYER DETAIL MODAL ===== -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-content" id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
