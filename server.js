@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 // ── MongoDB connection ────────────────────────────
 // Change MONGO_URI to your connection string if needed.
 // Default: local MongoDB on the same machine.
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/abl2026';
+const MONGO_URI = 'mongodb+srv://Vercel-Admin-abl-players-data:fya6VqdN3k4o0vX7@abl-players-data.yqjmwwa.mongodb.net/?retryWrites=true&w=majority';
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log(`✅  MongoDB connected → ${MONGO_URI}`))
