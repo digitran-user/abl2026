@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 // ── MongoDB connection ────────────────────────────
 // Change MONGO_URI to your connection string if needed.
 // Default: local MongoDB on the same machine.
-const MONGO_URI = 'mongodb+srv://Vercel-Admin-abl-players-data:fya6VqdN3k4o0vX7@abl-players-data.yqjmwwa.mongodb.net/?retryWrites=true&w=majority';
+const MONGO_URI = "mongodb+srv://eagerlearners2k_db_user:jWgkKHwCy9bh548g@cluster0.65ouz45.mongodb.net/playerDetails";
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log(`✅  MongoDB connected → ${MONGO_URI}`))
