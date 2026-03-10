@@ -59,9 +59,12 @@ const COL_MAP = {
 // ─── SKILL NORMALISER ──────────────────────────────
 function normaliseSkill(raw) {
   const s = String(raw || '').toLowerCase().trim();
+
   if (s.includes('adv') || s === 'a') return 'Advanced';
+  if (s.includes('intermediate+') || s.includes('int+')) return 'Intermediate+';
   if (s.includes('int') || s === 'i') return 'Intermediate';
   if (s.includes('beg') || s.includes('nov') || s === 'b') return 'Beginner';
+
   return raw ? String(raw).trim() : 'Intermediate';
 }
 
@@ -71,6 +74,27 @@ function normaliseGender(raw) {
   if (s.includes('wom') || s.includes('fem') || s === 'f') return 'Womens';
   if (s.includes('kid') || s.includes('jun') || s.includes('child') || s === 'k') return 'Kids';
   return 'Men';
+}
+
+//Categories Normaliser
+function normaliseCategory(cat = '') {
+  const c = cat.toLowerCase();
+
+  if (c.includes('mens')) return 'Mens';
+  if (c.includes('womens')) return 'Womens';
+  if (c.includes('kids')) return 'Kids';
+
+  return 'Other';
+}
+
+function getCategoryType(cat = '') {
+  const c = cat.toLowerCase().trim();
+
+  if (c.includes('mens')) return 'mens';
+  if (c.includes('womens')) return 'womens';
+  if (c.includes('kids')) return 'kids';
+
+  return 'other';
 }
 
 // ─── COLOURS ───────────────────────────────────────
@@ -385,20 +409,24 @@ function filterPlayers() {
   const skillSel = document.getElementById('skill-filter').value;
 
   filteredPlayers = players.filter(p => {
+
     const matchGender =
   activeGender === 'All' ||
-  (p.gender && p.gender.toLowerCase().includes(activeGender.toLowerCase().replace('s','')));
+  (p.category && p.category.toLowerCase().startsWith(activeGender.toLowerCase()));
+
     let matchSkill = true;
     if (skillSel === 'advanced')     matchSkill = p.skill === 'Advanced';
     if (skillSel === 'intermediate') matchSkill = p.skill === 'Intermediate';
     if (skillSel === 'beginner')     matchSkill = p.skill === 'Beginner';
     if (skillSel === 'sold_price')   matchSkill = p.status === 'Sold';
+
     const matchQ = !q
       || p.name.toLowerCase().includes(q)
       || (p.category || '').toLowerCase().includes(q)
       || (p.skill || '').toLowerCase().includes(q)
       || (p.country || '').toLowerCase().includes(q)
       || (p.sold_to || '').toLowerCase().includes(q);
+
     return matchGender && matchSkill && matchQ;
   });
 
@@ -409,6 +437,17 @@ function filterPlayers() {
 
   renderPlayerGrid();
 }
+
+function shortCategory(cat = '') {
+  const c = cat.toLowerCase().trim();
+
+  if (c.startsWith('women')) return 'Womens';
+  if (c.startsWith('men')) return 'Mens';
+  if (c.startsWith('kids')) return 'Kids';
+
+  return cat;
+}
+
 
 // ─── RENDER PLAYER CARDS ───────────────────────────
 function renderPlayerGrid() {
@@ -452,11 +491,12 @@ function renderPlayerGrid() {
           <img class="player-photo" src="${img}" alt="${p.name}"
                onerror="this.onerror=null;this.src='${avatarUrl(p)}'" />
           <div class="photo-scrim"></div>
-          <div class="player-status-badge ${statusClass}">${p.status}</div>
+          <div class="player-status-badge ${statusClass}" style="background:#086827;color:#ffffff;border:1px solid #086827">${p.status}</div>
           <!-- Category pill top-left (replaces gender) -->
-          <div class="gender-pill" style="background:${cc}28;color:#818cf8;border-color:${cc}60">
-            🏸 ${p.category || '—'}
-          </div>
+          <!-- Category pill top-left -->
+<div class="gender-pill" style="background:#2563eb;color:#ffffff;border:1px solid #3d6ae7">
+  🏸 ${shortCategory(p.category) || '—'}
+</div>
           <div class="photo-name-strip">
             <div class="photo-strip-name" title="${p.name}">${p.name}</div>
             <div class="photo-strip-sub">
@@ -513,7 +553,7 @@ function openModal(id) {
         </div>
         <div class="modal-name">${p.name}</div>
         <div class="modal-meta-row">
-          ${p.category ? `<span>🏸 ${p.category}</span>` : ''}
+         ${p.category ? `<span>🏸 ${shortCategory(p.category)}</span>` : ''}
           ${p.age && p.age !== '—' ? `<span>🎂 Age: ${p.age}</span>` : ''}
           ${p.country && p.country !== '—' ? `<span>🌍 ${p.country}</span>` : ''}
           ${p.hand && p.hand !== '—' ? `<span>🖐 ${p.hand}-handed</span>` : ''}
