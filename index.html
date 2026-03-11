@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ABL 2026</title>
     <meta name="description" content="Assetz Badminton League 2026" />
+    <link rel="icon" type="image/png" href="/images/abllogo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
@@ -20,7 +21,7 @@
     <!-- ===== NAV ===== -->
     <nav class="navbar" id="navbar">
         <div class="nav-brand">
-            <div class="nav-logo"><img src="/images/abllogo.png" /></div>
+           <div class="nav-logo"><img src="/images/abllogo.png" class="nav-logo-img"/></div>
             <span class="nav-title">ABL 2026</span>
         </div>
         <div class="nav-tabs">
@@ -77,8 +78,8 @@
             </div>
             <div class="filter-chips" id="filter-chips">
                 <button class="chip active" onclick="setGenderFilter('All', this)">All</button>
-                <button class="chip chip-men" onclick="setGenderFilter('Men', this)">👨 Men</button>
-                <button class="chip chip-women" onclick="setGenderFilter('Womens', this)">👩 Women</button>
+                <button class="chip chip-men" onclick="setGenderFilter('Mens', this)">👨 Mens</button>
+                <button class="chip chip-women" onclick="setGenderFilter('Womens', this)">👩 Womens</button>
                 <button class="chip chip-kids" onclick="setGenderFilter('Kids', this)">🧒 Kids</button>
             </div>
             <div class="sort-wrap">
@@ -124,7 +125,7 @@
                 </div>
 
                 <div class="format-hint">
-                    <h4>📌 Expected Excel Column Names</h4>
+                    <h4>Expected Excel Column Names</h4>
                     <div class="columns-grid">
                         <span class="col-tag" style="border-color:#6366f1;color:#818cf8">Name *</span>
                         <span class="col-tag" style="border-color:#6366f1;color:#818cf8">Gender *</span>
@@ -147,8 +148,8 @@
                 </div>
 
                 <div class="upload-actions">
-                    <button class="btn-secondary" onclick="loadSampleData()">🎯 Load Sample Data</button>
-                    <button class="btn-secondary" onclick="downloadTemplate()">⬇️ Download Template</button>
+                    <button class="btn-secondary" onclick="loadSampleData()">Load Sample Data</button>
+                    <button class="btn-secondary" onclick="downloadTemplate()">Download Template</button>
                 </div>
             </div>
 
@@ -162,8 +163,8 @@
                     <table class="preview-table" id="preview-table"></table>
                 </div>
                 <div class="preview-actions">
-                    <button class="btn-danger" onclick="clearData()">🗑️ Clear</button>
-                    <button class="btn-primary" id="btn-import" onclick="importData()">💾 Import &amp; Save to
+                    <button class="btn-danger" onclick="clearData()">Clear</button>
+                    <button class="btn-primary" id="btn-import" onclick="importData()">Import &amp; Save to
                         DB</button>
                 </div>
             </div>
@@ -217,9 +218,9 @@
                 </div>
                 <div class="bid-quick-btns" id="bid-quick-btns"></div>
                 <div class="auction-actions">
-                    <button class="btn-bid" id="btn-bid" onclick="placeBid()">🔨 Place Bid</button>
-                    <button class="btn-sold" id="btn-sold" onclick="markSold()">✅ Sold!</button>
-                    <button class="btn-unsold" id="btn-unsold" onclick="markUnsold()">❌ Unsold</button>
+                    <button class="btn-bid" id="btn-bid" onclick="placeBid()">Place Bid</button>
+                    <button class="btn-sold" id="btn-sold" onclick="markSold()">Sold!</button>
+                    <button class="btn-unsold" id="btn-unsold" onclick="markUnsold()">Unsold</button>
                 </div>
                 <div class="bid-history" id="bid-history"></div>
             </div>

@@ -21,18 +21,18 @@ let pendingRows     = [];
 
 // ─── FRANCHISE TEAMS ───────────────────────────────
 let teams = [
-  { id:1,  name: 'Backhand Brigade',       logo: 'https://ui-avatars.com/api/?name=BB&background=6366f1&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:2,  name: 'Netflicks&Kill',         logo: 'https://ui-avatars.com/api/?name=NK&background=e11d48&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:3,  name: 'Club Shakti',            logo: 'https://ui-avatars.com/api/?name=CS&background=f59e0b&color=000&size=64', budget: 800000, spent: 0 },
-  { id:4,  name: 'Big Dawgs',              logo: 'https://ui-avatars.com/api/?name=BD&background=0ea5e9&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:5,  name: 'Mavericks63',            logo: 'https://ui-avatars.com/api/?name=M6&background=7c3aed&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:6,  name: 'Dhurandhar Smash Squad', logo: 'https://ui-avatars.com/api/?name=DS&background=16a34a&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:7,  name: 'Shuttle Strikers',       logo: 'https://ui-avatars.com/api/?name=SS&background=f97316&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:8,  name: 'Court Commanders',       logo: 'https://ui-avatars.com/api/?name=CC&background=06b6d4&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:9,  name: 'Assetz Challengers',     logo: 'https://ui-avatars.com/api/?name=AC&background=dc2626&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:10, name: 'Supersonic',             logo: 'https://ui-avatars.com/api/?name=SN&background=4f46e5&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:11, name: 'Smash Syndicate',        logo: 'https://ui-avatars.com/api/?name=SY&background=be185d&color=fff&size=64', budget: 800000, spent: 0 },
-  { id:12, name: 'Assetz Endless Rallies', logo: 'https://ui-avatars.com/api/?name=AE&background=0f766e&color=fff&size=64', budget: 800000, spent: 0 },
+  { id:1,  name: 'Backhand Brigade',       logo: '/images/backhand-brigade.png', budget: 800000, spent: 0 },
+  { id:2,  name: 'Netflicks&Kill',         logo: '/images/netflicks-kill.png', budget: 800000, spent: 0 },
+  { id:3,  name: 'Club Shakti',            logo: '/images/club-shakti.png', budget: 800000, spent: 0 },
+  { id:4,  name: 'Big Dawgs',              logo: '/images/big-dawgs.png', budget: 800000, spent: 0 },
+  { id:5,  name: 'Mavericks63',            logo: '/images/mavericks.png', budget: 800000, spent: 0 },
+  { id:6,  name: 'Dhurandhar Smash Squad', logo: '/images/dhurandhar-squad.png', budget: 800000, spent: 0 },
+  { id:7,  name: 'Shuttle Strikers',       logo: '/images/shuttle-strikers.png', budget: 800000, spent: 0 },
+  { id:8,  name: 'Court Commanders',       logo: '/images/court-commanders.png', budget: 800000, spent: 0 },
+  { id:9,  name: 'Assetz Challengers',     logo: '/images/assetz-challengers.png', budget: 800000, spent: 0 },
+  { id:10, name: 'Supersonic',             logo: '/images/supersonic.png', budget: 800000, spent: 0 },
+  { id:11, name: 'Smash Syndicate',        logo: '/images/smash-syndicate.png', budget: 800000, spent: 0 },
+  { id:12, name: 'Assetz Endless Rallies', logo: '/images/assetz-rally.png', budget: 800000, spent: 0 },
 ];
 
 // ─── COLUMN MAP ────────────────────────────────────
@@ -59,9 +59,12 @@ const COL_MAP = {
 // ─── SKILL NORMALISER ──────────────────────────────
 function normaliseSkill(raw) {
   const s = String(raw || '').toLowerCase().trim();
+
   if (s.includes('adv') || s === 'a') return 'Advanced';
+  if (s.includes('intermediate+') || s.includes('int+')) return 'Intermediate+';
   if (s.includes('int') || s === 'i') return 'Intermediate';
   if (s.includes('beg') || s.includes('nov') || s === 'b') return 'Beginner';
+
   return raw ? String(raw).trim() : 'Intermediate';
 }
 
@@ -71,6 +74,27 @@ function normaliseGender(raw) {
   if (s.includes('wom') || s.includes('fem') || s === 'f') return 'Womens';
   if (s.includes('kid') || s.includes('jun') || s.includes('child') || s === 'k') return 'Kids';
   return 'Men';
+}
+
+//Categories Normaliser
+function normaliseCategory(cat = '') {
+  const c = cat.toLowerCase();
+
+  if (c.includes('mens')) return 'Mens';
+  if (c.includes('womens')) return 'Womens';
+  if (c.includes('kids')) return 'Kids';
+
+  return 'Other';
+}
+
+function getCategoryType(cat = '') {
+  const c = cat.toLowerCase().trim();
+
+  if (c.includes('mens')) return 'mens';
+  if (c.includes('womens')) return 'womens';
+  if (c.includes('kids')) return 'kids';
+
+  return 'other';
 }
 
 // ─── COLOURS ───────────────────────────────────────
@@ -385,7 +409,11 @@ function filterPlayers() {
   const skillSel = document.getElementById('skill-filter').value;
 
   filteredPlayers = players.filter(p => {
-    const matchGender = activeGender === 'All' || p.gender === activeGender;
+
+    const matchGender =
+  activeGender === 'All' ||
+  (p.category && p.category.toLowerCase().startsWith(activeGender.toLowerCase()));
+
     let matchSkill = true;
     if (skillSel === 'advanced')     matchSkill = p.skill === 'Advanced';
     if (skillSel === 'intermediate') matchSkill = p.skill === 'Intermediate';
@@ -407,6 +435,17 @@ function filterPlayers() {
 
   renderPlayerGrid();
 }
+
+function shortCategory(cat = '') {
+  const c = cat.toLowerCase().trim();
+
+  if (c.startsWith('women')) return 'Womens';
+  if (c.startsWith('men')) return 'Mens';
+  if (c.startsWith('kids')) return 'Kids';
+
+  return cat;
+}
+
 
 // ─── RENDER PLAYER CARDS ───────────────────────────
 function renderPlayerGrid() {
@@ -450,11 +489,12 @@ function renderPlayerGrid() {
           <img class="player-photo" src="${img}" alt="${p.name}"
                onerror="this.onerror=null;this.src='${avatarUrl(p)}'" />
           <div class="photo-scrim"></div>
-          <div class="player-status-badge ${statusClass}">${p.status}</div>
+          <div class="player-status-badge ${statusClass}" style="background:#086827;color:#ffffff;border:1px solid #086827">${p.status}</div>
           <!-- Category pill top-left (replaces gender) -->
-          <div class="gender-pill" style="background:${cc}28;color:#818cf8;border-color:${cc}60">
-            🏸 ${p.category || '—'}
-          </div>
+          <!-- Category pill top-left -->
+<div class="gender-pill" style="background:#2563eb;color:#ffffff;border:1px solid #3d6ae7">
+  🏸 ${shortCategory(p.category) || '—'}
+</div>
           <div class="photo-name-strip">
             <div class="photo-strip-name" title="${p.name}">${p.name}</div>
             <div class="photo-strip-sub">
@@ -511,7 +551,7 @@ function openModal(id) {
         </div>
         <div class="modal-name">${p.name}</div>
         <div class="modal-meta-row">
-          ${p.category ? `<span>🏸 ${p.category}</span>` : ''}
+         ${p.category ? `<span>🏸 ${shortCategory(p.category)}</span>` : ''}
           ${p.age && p.age !== '—' ? `<span>🎂 Age: ${p.age}</span>` : ''}
           ${p.country && p.country !== '—' ? `<span>🌍 ${p.country}</span>` : ''}
           ${p.hand && p.hand !== '—' ? `<span>🖐 ${p.hand}-handed</span>` : ''}
